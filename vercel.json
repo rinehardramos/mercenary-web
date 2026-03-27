@@ -1,11 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.schema.json",
-  "framework": "nextjs",
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
-  "framework": null,
   "regions": ["sfo1"],
   "env": {
     "NEXT_PUBLIC_API_URL": "https://api.mercs.tech"
