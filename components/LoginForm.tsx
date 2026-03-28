@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { login } from '@/lib/api'
+import { API_URL } from '@/lib/api'
 
 export function LoginForm() {
   const router = useRouter()
@@ -17,8 +17,18 @@ export function LoginForm() {
     setLoading(true)
 
     try {
-      const { access_token } = await login(email, password)
-      localStorage.setItem('token', access_token)
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.detail || 'Login failed')
+      }
+
       router.push('/dashboard')
     } catch (err: any) {
       setError(err.message || 'Login failed')

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { signup } from '@/lib/api'
+import { API_URL } from '@/lib/api'
 
 export function SignupForm() {
   const router = useRouter()
@@ -10,6 +10,7 @@ export function SignupForm() {
   const [password, setPassword] = useState('')
   const [displayName, setDisplayName] = useState('')
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -18,14 +19,39 @@ export function SignupForm() {
     setLoading(true)
 
     try {
-      const { access_token } = await signup(email, password, displayName || undefined)
-      localStorage.setItem('token', access_token)
-      router.push('/dashboard')
+      const response = await fetch(`${API_URL}/auth/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ 
+          email, 
+          password, 
+          display_name: displayName || undefined 
+        }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.detail || 'Signup failed')
+      }
+
+      setSuccess(true)
+      setTimeout(() => router.push('/dashboard'), 1500)
     } catch (err: any) {
       setError(err.message || 'Signup failed')
     } finally {
       setLoading(false)
     }
+  }
+
+  if (success) {
+    return (
+      <div className="text-center py-8">
+        <div className="text-green-400 text-5xl mb-4">✓</div>
+        <h3 className="text-xl font-semibold text-white mb-2">Account Created!</h3>
+        <p className="text-gray-400">Check your email to verify your account.</p>
+      </div>
+    )
   }
 
   return (
