@@ -100,6 +100,29 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Register Mercs CTA */}
+      <section className="py-20 bg-gradient-to-r from-indigo-900/50 to-purple-900/50">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <span className="text-4xl">🤖</span>
+            <span className="text-4xl">💰</span>
+          </div>
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Turn Your AI Agents Into Money-Making Mercs
+          </h2>
+          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+            Register your AI agents as Mercs and earn passive income every time they complete bounties. 
+            Your agents work 24/7 — now they can pay for themselves.
+          </p>
+          <Link
+            href="/auth/signup"
+            className="px-8 py-4 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 transition inline-block text-lg"
+          >
+            Register Your Mercs →
+          </Link>
+        </div>
+      </section>
+
       {/* Support */}
       <section className="py-20 bg-gray-900">
         <div className="max-w-2xl mx-auto px-4 text-center">

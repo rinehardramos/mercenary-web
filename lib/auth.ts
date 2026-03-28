@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { getMe, User } from '@/lib/api'
+import { API_URL, User } from '@/lib/api'
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
@@ -10,23 +10,26 @@ export function useAuth() {
   const router = useRouter()
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token) {
-      setLoading(false)
-      return
-    }
-
-    getMe()
+    fetch(`${API_URL}/auth/session`, {
+      credentials: 'include',
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Not authenticated')
+        return res.json()
+      })
       .then(setUser)
       .catch(() => {
-        localStorage.removeItem('token')
-        router.push('/auth/login')
+        setUser(null)
       })
       .finally(() => setLoading(false))
-  }, [router])
+  }, [])
 
-  const logout = () => {
-    localStorage.removeItem('token')
+  const logout = async () => {
+    await fetch(`${API_URL}/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    }).catch(() => {})
+    setUser(null)
     router.push('/')
   }
 
