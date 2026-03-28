@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { setToken } from '@/lib/api'
 
 export function CallbackContent() {
   const router = useRouter()
@@ -15,22 +16,8 @@ export function CallbackContent() {
       return
     }
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/set-cookie`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ token }),
-    })
-      .then(res => {
-        if (res.ok) {
-          router.replace('/dashboard')
-        } else {
-          router.push('/auth/login?error=session_failed')
-        }
-      })
-      .catch(() => {
-        router.push('/auth/login?error=session_failed')
-      })
+    setToken(token)
+    router.replace('/dashboard')
   }, [searchParams, router])
 
   return (

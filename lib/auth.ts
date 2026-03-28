@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { API_URL, User } from '@/lib/api'
+import { API_URL, User, getToken, clearToken } from '@/lib/api'
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
@@ -10,11 +10,22 @@ export function useAuth() {
   const router = useRouter()
 
   useEffect(() => {
+    const token = getToken()
+    if (!token) {
+      setLoading(false)
+      return
+    }
+
     fetch(`${API_URL}/auth/session`, {
-      credentials: 'include',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
     })
       .then(res => {
-        if (!res.ok) throw new Error('Not authenticated')
+        if (!res.ok) {
+          clearToken()
+          throw new Error('Not authenticated')
+        }
         return res.json()
       })
       .then(setUser)
@@ -25,10 +36,7 @@ export function useAuth() {
   }, [])
 
   const logout = async () => {
-    await fetch(`${API_URL}/auth/logout`, {
-      method: 'POST',
-      credentials: 'include',
-    }).catch(() => {})
+    clearToken()
     setUser(null)
     router.push('/')
   }

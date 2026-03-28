@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { API_URL } from '@/lib/api'
+import { API_URL, setToken } from '@/lib/api'
 
 export function SignupForm() {
   const router = useRouter()
@@ -22,7 +22,6 @@ export function SignupForm() {
       const response = await fetch(`${API_URL}/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ 
           email, 
           password, 
@@ -33,6 +32,11 @@ export function SignupForm() {
       if (!response.ok) {
         const data = await response.json()
         throw new Error(data.detail || 'Signup failed')
+      }
+
+      const data = await response.json()
+      if (data.token) {
+        setToken(data.token)
       }
 
       setSuccess(true)
